@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Bible Chapter
-permalink: /b/*path
+permalink: /b/
 ---
 
 <!DOCTYPE html>
@@ -16,30 +16,22 @@ permalink: /b/*path
 <div id="jsonData">Loading...</div>
 
 <script>
-    // Function to parse the URL path
-    function getPathSegments() {
-        const path = window.location.pathname.split('/b/')[1]; // Adjust based on your site's URL structure
-        return path.split('/');
-    }
 
+        document.addEventListener('DOMContentLoaded', function() {
+        // Function to parse the query string into an object
+        function getQueryParams(queryString) {
+            return queryString.replace(/(^\?)/,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1], this}.bind({}))[0];
+        }
 
+        // Extract the query string from the URL
+        const queryString = window.location.search;
+        const params = getQueryParams(queryString);
 
-    // Function to parse query parameters
-    function getQueryParams() {
-        var params = {};
-        location.search.substr(1).split("&").forEach(function(part) {
-            var item = part.split("=");
-            params[item[0]] = decodeURIComponent(item[1]);
-        });
-        return params;
-    }
+        // Assuming the format is "?abbrev/chapter"
+        if (params && Object.keys(params).length > 0) {
+        const firstParamKey = Object.keys(params)[0];
+        const [abbrev, chapter] = firstParamKey.split('/');
 
-    // Fetch and display the JSON data
-    document.addEventListener('DOMContentLoaded', function() {
-        //var params = getQueryParams();
-        const segments = getPathSegments();
-        const abbrev = segments[0]; // The book abbreviation
-        const chapter = segments[1]; // The chapter number
 
         var apiUrl = `https://www.abibliadigital.com.br/api/verses/nvi/${abbrev}/${chapter}`; // Construct the URL with parameters
 
