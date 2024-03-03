@@ -54,9 +54,6 @@ font-weight: bold;
         ).join('');
     }
 
-    document.getElementById('bookInfo').innerHTML = displayBookInfo(jsonData);
-    document.getElementById('verses').innerHTML = displayVerses(jsonData.verses);
-
     document.addEventListener('DOMContentLoaded', function () {
         // Function to parse the query string into an object
         function getQueryParams(queryString) {
