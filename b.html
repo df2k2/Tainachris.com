@@ -16,6 +16,14 @@ permalink: /b/
 <div id="jsonData">Loading...</div>
 
 <script>
+    // Function to parse the URL path
+    function getPathSegments() {
+        const path = window.location.pathname.split('/b/')[1]; // Adjust based on your site's URL structure
+        return path.split('/');
+    }
+
+
+
     // Function to parse query parameters
     function getQueryParams() {
         var params = {};
@@ -28,8 +36,12 @@ permalink: /b/
 
     // Fetch and display the JSON data
     document.addEventListener('DOMContentLoaded', function() {
-        var params = getQueryParams();
-        var apiUrl = `https://www.abibliadigital.com.br/api/verses/nvi/${params.abbrev}/${params.chapter}`; // Construct the URL with parameters
+        //var params = getQueryParams();
+        const segments = getPathSegments();
+        const abbrev = segments[0]; // The book abbreviation
+        const chapter = segments[1]; // The chapter number
+
+        var apiUrl = `https://www.abibliadigital.com.br/api/verses/nvi/${abbrev}/${chapter}`; // Construct the URL with parameters
 
         fetch(apiUrl)
             .then(response => {
