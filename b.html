@@ -17,10 +17,12 @@ permalink: /b/
 
 <script>
 
-        document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Function to parse the query string into an object
         function getQueryParams(queryString) {
-            return queryString.replace(/(^\?)/,'').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1], this}.bind({}))[0];
+            return queryString.replace(/(^\?)/, '').split("&").map(function (n) {
+                return n = n.split("="), this[n[0]] = n[1], this
+            }.bind({}))[0];
         }
 
         // Extract the query string from the URL
@@ -29,27 +31,27 @@ permalink: /b/
 
         // Assuming the format is "?abbrev/chapter"
         if (params && Object.keys(params).length > 0) {
-        const firstParamKey = Object.keys(params)[0];
-        const [abbrev, chapter] = firstParamKey.split('/');
+            const firstParamKey = Object.keys(params)[0];
+            const [abbrev, chapter] = firstParamKey.split('/');
 
 
-        var apiUrl = `https://www.abibliadigital.com.br/api/verses/nvi/${abbrev}/${chapter}`; // Construct the URL with parameters
-
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                var displayElement = document.getElementById('jsonData');
-                displayElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-                document.getElementById('jsonData').innerHTML = 'Error loading data.';
-            });
+            var apiUrl = `https://www.abibliadigital.com.br/api/verses/nvi/${abbrev}/${chapter}`; // Construct the URL with parameters
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    var displayElement = document.getElementById('jsonData');
+                    displayElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    document.getElementById('jsonData').innerHTML = 'Error loading data.';
+                });
+        }
     });
 </script>
 </body>
