@@ -6,7 +6,6 @@ collection: books
 entries_layout: grid
 ---
 
-Sample document listing for the collection `_books`.
 
 {% for post in site.data.books %}
 {% assign range = (1..(post.chapters)) %}
@@ -16,7 +15,7 @@ Sample document listing for the collection `_books`.
 <li>Group: {{ post.group }}</li>
 <li>Author: {{ post.author }}</li>
 <li>Chapters: {{ post.chapters }}</li>
-<li><a target="_blank" href="https://www.abibliadigital.com.br/api/verses/nvi/{{ post.abbrev.pt }}/1">{{ post.name }} 1:</a></li>
+<li><a target="_blank" href="/b?{{ post.abbrev.pt }}/1">{{ post.name }} 1:</a></li>
 </ul>
 
 
