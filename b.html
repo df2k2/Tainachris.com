@@ -1,0 +1,52 @@
+---
+layout: default
+title: Bible Chapter
+permalink: /b/
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+</head>
+<body>
+<h1>Dynamic JSON Data Display</h1>
+<div id="jsonData">Loading...</div>
+
+<script>
+    // Function to parse query parameters
+    function getQueryParams() {
+        var params = {};
+        location.search.substr(1).split("&").forEach(function(part) {
+            var item = part.split("=");
+            params[item[0]] = decodeURIComponent(item[1]);
+        });
+        return params;
+    }
+
+    // Fetch and display the JSON data
+    document.addEventListener('DOMContentLoaded', function() {
+        var params = getQueryParams();
+        var apiUrl = `https://www.abibliadigital.com.br/api/verses/nvi/${params.abbrev}/${params.chapter}`; // Construct the URL with parameters
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                var displayElement = document.getElementById('jsonData');
+                displayElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+                document.getElementById('jsonData').innerHTML = 'Error loading data.';
+            });
+    });
+</script>
+</body>
+</html>
