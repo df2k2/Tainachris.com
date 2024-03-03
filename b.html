@@ -92,10 +92,10 @@ font-weight: bold;
         const queryString = window.location.search;
         const params = getQueryParams(queryString);
 
-        // Assuming the format is "?abbrev/chapter"
+        // Assuming the format is "?abbrev/chapter/chapters"
         if (params && Object.keys(params).length > 0) {
             const firstParamKey = Object.keys(params)[0];
-            const [abbrev, chapter] = firstParamKey.split('/');
+            const [abbrev, chapter, chapters] = firstParamKey.split('/');
 
 
             var apiUrl = `https://www.abibliadigital.com.br/api/verses/nvi/${abbrev}/${chapter}`; // Construct the URL with parameters
