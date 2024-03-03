@@ -10,12 +10,52 @@ permalink: /b/
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page.title }}</title>
+
+
+<style>
+body {
+font-family: Arial, sans-serif;
+line-height: 1.6;
+margin: 20px;
+}
+.book-metadata, .verses {
+margin-bottom: 20px;
+}
+.verse {
+margin-bottom: 10px;
+}
+.verse-number {
+font-weight: bold;
+}
+</style>
 </head>
 <body>
-<h1>Dynamic JSON Data Display</h1>
-<div id="jsonData">Loading...</div>
+<!--<h1>Dynamic JSON Data Display</h1>-->
+<!--<div id="jsonData">Loading...</div>-->
+<div id="bookInfo"></div>
+<div id="verses"></div>
 
 <script>
+
+    function displayBookInfo(bookData) {
+        const { name, author, group, version } = bookData.book;
+        const { number, verses } = bookData.chapter;
+        return `<div class="book-metadata">
+                        <h2>${name} ${number}:1-${verses}</h2>
+                        <p><strong>Author:</strong> ${author}</p>
+                    </div>`;
+    }
+
+    function displayVerses(verses) {
+        return verses.map(verse =>
+            `<div class="verse">
+                    <span class="verse-number">Verse ${verse.number}:</span> ${verse.text}
+                </div>`
+        ).join('');
+    }
+
+    document.getElementById('bookInfo').innerHTML = displayBookInfo(jsonData);
+    document.getElementById('verses').innerHTML = displayVerses(jsonData.verses);
 
     document.addEventListener('DOMContentLoaded', function () {
         // Function to parse the query string into an object
@@ -44,8 +84,10 @@ permalink: /b/
                     return response.json();
                 })
                 .then(data => {
-                    var displayElement = document.getElementById('jsonData');
-                    displayElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                    document.getElementById('bookInfo').innerHTML = displayBookInfo(data);
+                    document.getElementById('verses').innerHTML = displayVerses(data.verses);
+                    // var displayElement = document.getElementById('jsonData');
+                    // displayElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
                 })
                 .catch(error => {
                     console.error('There has been a problem with your fetch operation:', error);
