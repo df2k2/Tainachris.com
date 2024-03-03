@@ -38,7 +38,8 @@ remote_theme: "mmistakes/jekyll-theme-basically-basic@1.4.5"
 # Excluded items can be processed by explicitly listing the directories or
 # their entries' file path in the `include:` list.
 #
-# exclude:
+exclude:
+    - docs/
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
