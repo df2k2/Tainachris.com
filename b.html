@@ -14,19 +14,40 @@ permalink: /b/
 
 <style>
 body {
-font-family: Arial, sans-serif;
 line-height: 1.6;
 margin: 20px;
+    font-family: "Lato","open sans", "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 21px;
+    font-weight: 400;
+    color: #333;
+    text-rendering: optimizeLegibility;
+    -moz-font-feature-settings: "kern" on,"liga" on,"calt" on,"onum","pnum";
+    font-feature-settings: "kern" on,"liga" on,"calt" on,"onum","pnum";
+
 }
+
+.wrapper {
+    max-width: 1240px;
+    text-align: left;
+    margin: 0 auto;
+
+}
+
 .book-metadata, .verses {
 margin-bottom: 20px;
 }
 .verse {
 margin-bottom: 10px;
+    display:inline;
 }
 .verse-number {
 font-weight: bold;
 }
+
+.verse-number sup {
+    vertical-align: super;
+}
+
 </style>
 </head>
 <body>
@@ -49,7 +70,7 @@ font-weight: bold;
     function displayVerses(verses) {
         return verses.map(verse =>
             `<div class="verse">
-                    <span class="verse-number">Verse ${verse.number}:</span> ${verse.text}
+                    <span class="verse-number"><sup>${verse.number}</sup></span> ${verse.text}
                 </div>`
         ).join('');
     }
@@ -83,12 +104,12 @@ font-weight: bold;
                 .then(data => {
                     document.getElementById('bookInfo').innerHTML = displayBookInfo(data);
                     document.getElementById('verses').innerHTML = displayVerses(data.verses);
-                    // var displayElement = document.getElementById('jsonData');
+                    // var displayElement = document.getElementById('data');
                     // displayElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
                 })
                 .catch(error => {
                     console.error('There has been a problem with your fetch operation:', error);
-                    document.getElementById('jsonData').innerHTML = 'Error loading data.';
+                    document.getElementById('data').innerHTML = 'Error loading data.';
                 });
         }
     });
