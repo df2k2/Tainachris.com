@@ -52,7 +52,6 @@ remote_theme: "mmistakes/jekyll-theme-basically-basic@1.4.5"
 
 # Build settings
 markdown: kramdown
-theme: jekyll-theme-basically-basic
 plugins: # previously gems
   - jekyll-feed
   - jekyll-seo-tag
