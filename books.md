@@ -8,7 +8,7 @@ entries_layout: grid
 
 
 {% for post in site.data.books %}
-{% assign range = (1..(post.chapters)) %}
+{% assign range = (1..post.chapters) %}
   <article>
     <ul>
 <li><strong>{{ post.name }}</strong> ({{ post.abbrev.pt }})</li>
