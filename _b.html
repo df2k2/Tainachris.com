@@ -1,0 +1,204 @@
+---
+layout: default
+title: Bible Chapter
+permalink: /b/
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>{{ page.title }}</title>
+
+
+<style>
+body {
+line-height: 1.6;
+margin: 20px;
+    font-family: "Roboto","open sans", "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 21px;
+    font-weight: 400;
+    color: #333;
+    text-rendering: optimizeLegibility;
+    -moz-font-feature-settings: "kern" on,"liga" on,"calt" on,"onum","pnum";
+    font-feature-settings: "kern" on,"liga" on,"calt" on,"onum","pnum";
+
+}
+
+.wrapper {
+    max-width: 1240px;
+    text-align: left;
+    margin: 0 auto;
+
+}
+
+.book-metadata, .verses {
+margin-bottom: 20px;
+}
+.verse {
+margin-bottom: 10px;
+    display:inline;
+}
+.verse-number {
+font-weight: bold;
+}
+
+.verse-number sup {
+    vertical-align: super;
+    font-size:0.7rem;
+    color: #777;
+}
+
+#navigation {
+
+    margin-bottom:1rem;
+    color:#777;
+
+}
+</style>
+</head>
+<body>
+<!--<h1>Dynamic JSON Data Display</h1>-->
+<!--<div id="jsonData">Loading...</div>-->
+
+
+    <div id="bookInfo"></div>
+<div id="navigation">
+    <button id="prevChapter">&lt; Previous Chapter</button>
+    <button id="nextChapter">Next Chapter &gt;</button>
+</div>
+    <div id="verses"></div>
+
+
+
+<script>
+
+    function displayBookInfo(bookData) {
+        const { name, author, group, version } = bookData.book;
+        const { number, verses } = bookData.chapter;
+        return `<div class="book-metadata">
+                        <h2>${name} ${number}:1-${verses}</h2>
+                        <p><strong>Author:</strong> ${author}</p>
+                    </div>`;
+    }
+
+    function displayVerses(verses) {
+        return verses.map(verse =>
+            `<div class="verse">
+                    <span class="verse-number"><sup>${verse.number}</sup></span> ${verse.text}
+                </div>`
+        ).join('');
+    }
+
+    function getQueryParams(queryString) {
+        return queryString.replace(/(^\?)/, '').split("&").map(function (n) {
+            return n = n.split("="), this[n[0]] = n[1], this
+        }.bind({}))[0];
+    }
+
+    function navigateChapter(chapter) {
+        const params = getQueryParams(window.location.search);
+        if (params && Object.keys(params).length > 0) {
+            const firstParamKey = Object.keys(params)[0];
+            const [abbrev, , chapters] = firstParamKey.split('/');
+            window.location.search = `${abbrev}/${chapter}/${chapters}`;
+        }
+    }
+
+    function updateChapterNavigation(currentChapter) {
+        const prevChapterBtn = document.getElementById('prevChapter');
+        const nextChapterBtn = document.getElementById('nextChapter');
+        const { chapters } = parseUrl();
+        const totalChapters = parseInt(chapters);
+
+        // Disable Previous Chapter button if on the first chapter
+        if (currentChapter <= 1) {
+            prevChapterBtn.disabled = true;
+        } else {
+            prevChapterBtn.disabled = false;
+            prevChapterBtn.onclick = () => {
+                const prevChapter = parseInt(currentChapter) - 1;
+                navigateChapter(prevChapter);
+            };
+        }
+
+        // Disable Next Chapter button if on the last chapter
+        if (currentChapter >= totalChapters) {
+            nextChapterBtn.disabled = true;
+        } else {
+            nextChapterBtn.disabled = false;
+            nextChapterBtn.onclick = () => {
+                const nextChapter = parseInt(currentChapter) + 1;
+                navigateChapter(nextChapter);
+            };
+        }
+    }
+    function parseUrl() {
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        // Assuming the URL is something like "/b/gn/1/50"
+        const abbrevIndex = pathSegments.indexOf('b') + 1;
+        const abbrev = pathSegments[abbrevIndex];
+        const chapter = pathSegments[abbrevIndex + 1];
+        const chapters = pathSegments[abbrevIndex + 2];
+        return { abbrev, chapter, chapters };
+    }
+
+
+        async function fetchData() {
+        // Function to parse the query string into an object
+        function getQueryParams(queryString) {
+            return queryString.replace(/(^\?)/, '').split("&").map(function (n) {
+                return n = n.split("="), this[n[0]] = n[1], this
+            }.bind({}))[0];
+        }
+        function navigateChapter(chapter) {
+            const params = getQueryParams(window.location.search);
+            if (params && Object.keys(params).length > 0) {
+                const firstParamKey = Object.keys(params)[0];
+                const [abbrev, , chapters] = firstParamKey.split('/');
+                window.location.search = `${abbrev}/${chapter}/${chapters}`;
+            }
+        }
+
+
+
+
+        // Extract the query string from the URL
+        const queryString = window.location.search;
+        const params = getQueryParams(queryString);
+
+        // Assuming the format is "?abbrev/chapter/chapters"
+        if (params && Object.keys(params).length > 0) {
+            const firstParamKey = Object.keys(params)[0];
+            const [abbrev, chapter, chapters] = firstParamKey.split('/');
+
+            var apiUrl = `/assets/data/nvi/${abbrev}/${chapter}.json`;
+            fetch(apiUrl)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('bookInfo').innerHTML = displayBookInfo(data);
+                    document.getElementById('verses').innerHTML = displayVerses(data.verses);
+                    updateChapterNavigation(chapter);
+                    // var displayElement = document.getElementById('data');
+                    // displayElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    document.getElementById('data').innerHTML = 'Error loading data.';
+                });
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchData();
+    });
+
+</script>
+</body>
+</html>

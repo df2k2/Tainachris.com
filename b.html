@@ -109,24 +109,46 @@ font-weight: bold;
         }
     }
 
-    function updateChapterNavigation(chapter) {
+    function updateChapterNavigation(currentChapter) {
         const prevChapterBtn = document.getElementById('prevChapter');
         const nextChapterBtn = document.getElementById('nextChapter');
+        const { chapters } = parseUrl();
+        const totalChapters = parseInt(chapters);
 
-        prevChapterBtn.onclick = () => {
-            const prevChapter = (1*chapter - 1); // Ensures chapter doesn't go below 1
-            navigateChapter(prevChapter);
-        };
+        // Disable Previous Chapter button if on the first chapter
+        if (currentChapter <= 1) {
+            prevChapterBtn.disabled = true;
+        } else {
+            prevChapterBtn.disabled = false;
+            prevChapterBtn.onclick = () => {
+                const prevChapter = parseInt(currentChapter) - 1;
+                navigateChapter(prevChapter);
+            };
+        }
 
-        nextChapterBtn.onclick = () => {
-            const nextChapter = (1*chapter + 1); // Ensures chapter doesn't exceed total chapters
-            navigateChapter(nextChapter);
-        };
+        // Disable Next Chapter button if on the last chapter
+        if (currentChapter >= totalChapters) {
+            nextChapterBtn.disabled = true;
+        } else {
+            nextChapterBtn.disabled = false;
+            nextChapterBtn.onclick = () => {
+                const nextChapter = parseInt(currentChapter) + 1;
+                navigateChapter(nextChapter);
+            };
+        }
+    }
+    function parseUrl() {
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        // Assuming the URL is something like "/b/gn/1/50"
+        const abbrevIndex = pathSegments.indexOf('b') + 1;
+        const abbrev = pathSegments[abbrevIndex];
+        const chapter = pathSegments[abbrevIndex + 1];
+        const chapters = pathSegments[abbrevIndex + 2];
+        return { abbrev, chapter, chapters };
     }
 
 
-
-    document.addEventListener('DOMContentLoaded', function () {
+        async function fetchData() {
         // Function to parse the query string into an object
         function getQueryParams(queryString) {
             return queryString.replace(/(^\?)/, '').split("&").map(function (n) {
@@ -143,6 +165,8 @@ font-weight: bold;
         }
 
 
+
+
         // Extract the query string from the URL
         const queryString = window.location.search;
         const params = getQueryParams(queryString);
@@ -153,30 +177,8 @@ font-weight: bold;
             const [abbrev, chapter, chapters] = firstParamKey.split('/');
 
             var apiUrl = `/assets/data/nvi/${abbrev}/${chapter}.json`;
-            var apiUrl2 = `https://www.abibliadigital.com.br/api/verses/nvi/${abbrev}/${chapter}`; // Construct the URL with parameters
             fetch(apiUrl)
                 .then(response => {
-                    if (!response.ok) {
-                        //throw new Error('Network response was not ok');
-                        fetch(apiUrl2)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                document.getElementById('bookInfo').innerHTML = displayBookInfo(data);
-                                document.getElementById('verses').innerHTML = displayVerses(data.verses);
-                                updateChapterNavigation(chapter);
-                                // var displayElement = document.getElementById('data');
-                                // displayElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-                            })
-                            .catch(error => {
-                                console.error('There has been a problem with your fetch operation:', error);
-                                document.getElementById('data').innerHTML = 'Error loading data.';
-                            });
-                    }
                     return response.json();
                 })
                 .then(data => {
@@ -191,6 +193,10 @@ font-weight: bold;
                     document.getElementById('data').innerHTML = 'Error loading data.';
                 });
         }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchData();
     });
 
 </script>
